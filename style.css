@@ -1,0 +1,143 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(0deg, #6139a5 0%, #4570df 100%);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.game_board_wrap{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.boards{
+  display: flex;
+  gap: 30px;
+}
+
+#game_board {
+  width: 260px;
+  height: 520px;
+  position: relative;
+  background-color: black;
+  border: 5px solid #3e5eba;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+#score_board{
+  width: 200px;
+  height: 200px;
+  border: 5px solid #3e5eba;
+  background-color: black;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+#next_block_board{
+  width: 200px;
+  height: 200px;
+  border: 5px solid #3e5eba;
+  background-color: black;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.ghost {
+  width: 24px;
+  height: 24px;
+  border: 1px solid black;
+  position: absolute;
+  box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.3);
+}
+
+
+.colors{
+  position: absolute;
+  display: flex;
+  bottom: 0px;
+}
+
+.block-group {
+  display: flex; 
+  position: relative; 
+}
+
+.block{
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  border-width: 4px; 
+  border-style: solid; 
+  border-image-slice: 1;
+  z-index: 99;
+}
+
+.pink-color {
+  background-color: #FA1B54;
+  border-image-source: linear-gradient(
+    to top right,
+    #BB103C 50%,
+    #FF6D91 50%   
+  );
+}
+
+.orange-color {
+  background-color: #FE8D00;
+  border-image-source: linear-gradient(
+    to top right,
+    #C76301 50%,
+    #FFC065 50%   
+  );
+}
+
+.yellow-color {
+  background-color: #FFCF00;
+  border-image-source: linear-gradient(
+    to top right,
+    #DA9500 50%,
+    #FEE25C 50%   
+  );
+}
+
+.green-color {
+  background-color: #05C92C;
+  border-image-source: linear-gradient(
+    to top right,
+    #00911E 50%,
+    #66E380 50%
+  );
+}
+
+.skyblue-color {
+  background-color: #01EAF2;
+  border-image-source: linear-gradient(
+    to top right,
+    #009EA6 50%,
+    #66F6FC 50%   
+  );
+}
+
+.blue-color {
+  background-color: #00A7F3;
+  border-image-source: linear-gradient(
+    to top right,
+    #017BB4 50%,
+    #67CFFF 50%   
+  );
+}
+
+
+.purple-color {
+  background-color: #B561F9;
+  border-image-source: linear-gradient(
+    to top right,
+    #8045B0 50%,
+    #D2A2FB 50%   
+  );
+}
