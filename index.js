@@ -137,24 +137,49 @@ function moveBlockDown(block, intervalTime) {
 }
 
 
-function layoutBagSelect(bag) {
-  const randomIndex = Math.floor(Math.random() * bag.length);
-  const selectedObject = bag[randomIndex];
-  return selectedObject;
+function layoutBagSelector(bag) {
+  let newBag = [...bag];
+
+  function selectRandom() {
+    if (newBag.length === 0) {
+      newBag = [...bag];
+    }
+    const randomIndex = Math.floor(Math.random() * newBag.length);
+    const selectedObject = newBag.splice(randomIndex, 1)[0];
+    console.log(selectedObject);
+    return selectedObject; 
+  }
+  return selectRandom; 
 }
 
+const blockSelector = layoutBagSelector(blockTypes);
 
-
-const selectedBlock = layoutBagSelect(blockTypes);
+const selectedBlock = blockSelector();
 const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
 
-gameBoard.appendChild(newBlock);
-
-
-
-newBlock.style.position = "absolute";
+newBlock.style.position = "absolute"; 
 newBlock.style.top = "0px"; 
-newBlock.style.left = `${4*tile.size}px`;  
+newBlock.style.left = `${4 * tile.size}px`; 
 
-const intervalTime = 300;
-const blockMovement = moveBlockDown(newBlock, intervalTime);
+gameBoard.appendChild(newBlock); 
+
+const intervalTime = 300; 
+const blockMovement = moveBlockDown(newBlock, intervalTime); 
+
+
+// function createAndAddBlock() {
+//   const selectedBlock = blockSelector();
+//   const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
+
+//   newBlock.style.position = "absolute"; 
+//   newBlock.style.top = "0px"; 
+//   newBlock.style.left = `${4 * tile.size}px`; 
+
+//   gameBoard.appendChild(newBlock); 
+
+//   const intervalTime = 300; 
+//   const blockMovement = moveBlockDown(newBlock, intervalTime); 
+// }
+
+// let check = document.getElementById("checking"); 
+// check.addEventListener("click", createAndAddBlock); 

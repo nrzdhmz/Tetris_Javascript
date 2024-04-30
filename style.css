@@ -141,3 +141,10 @@ body {
     #D2A2FB 50%   
   );
 }
+#checking{
+  width: 100px;
+  height: 40px;
+  position: absolute;
+  right: 100px;
+  bottom: 100px;
+}
