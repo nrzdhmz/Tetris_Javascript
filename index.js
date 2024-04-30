@@ -2,7 +2,6 @@ let gameBoard = document.getElementById("game_board");
 let scoreBoard = document.getElementById("score_board");
 let nextBlock = document.getElementById("next_block_board");
 
-
 let widthBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("width"));
 let heightBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("height"));
 
@@ -121,20 +120,25 @@ const blockTypes = [
 
 function moveBlockDown(block, intervalTime) {
   let bottom = parseFloat(block.style.bottom || 0);
-  const moveInterval = setInterval(() => {
-    console.log(bottom);
-    bottom -= tile.size; 
-    if (bottom < -heightBoard) {
-      clearInterval(moveInterval);
-      bottom -= tile.size;
-    }else{
-      block.style.bottom = `${bottom}px`; 
-    }
-  }, intervalTime);
+  let moveInterval;
 
-  return moveInterval;
+  function startInterval() {
+    moveInterval = setInterval(() => {
+      console.log(bottom);
+      bottom -= tile.size; 
+      if (bottom < -heightBoard) {
+        clearInterval(moveInterval);
+
+      } else {
+        block.style.bottom = `${bottom}px`;
+      }
+    }, intervalTime);
+  }
+  startInterval();
+  return {
+    stop: () => clearInterval(moveInterval),
+  };
 }
-
 
 function layoutBagSelector(bag) {
   let newBag = [...bag];
@@ -153,32 +157,42 @@ function layoutBagSelector(bag) {
 
 const blockSelector = layoutBagSelector(blockTypes);
 
-// const selectedBlock = blockSelector();
-// const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
-
-// newBlock.style.position = "absolute"; 
-// newBlock.style.bottom = "0px"; 
-// newBlock.style.left = `${4 * tile.size}px`; 
-
-// gameBoard.appendChild(newBlock); 
-
-// const intervalTime = 400; 
-// const blockMovement = moveBlockDown(newBlock, intervalTime); 
-
+const blockArray = [];
 
 function createAndAddBlock() {
   const selectedBlock = blockSelector();
   const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
-
+  blockArray.push(newBlock);
   newBlock.style.position = "absolute"; 
   newBlock.style.bottom = "0px"; 
   newBlock.style.left = `${4 * tile.size}px`; 
 
   gameBoard.appendChild(newBlock); 
 
-  const intervalTime = 300; 
-  const blockMovement = moveBlockDown(newBlock, intervalTime); 
+  const intervalTime = 200; 
+  moveBlockDown(newBlock, intervalTime);
+  console.log(blockArray);
 }
 
-let check = document.getElementById("checking"); 
-check.addEventListener("click", createAndAddBlock); 
+document.addEventListener("keydown", (event) => {
+  const activeBlock = blockArray[blockArray.length - 1].block;
+  let left = parseFloat(activeBlock.style.left); 
+
+  if (event.key === "ArrowLeft") {
+    const newLeft = left - tile.size;
+    if (newLeft >= 0) { 
+      activeBlock.style.left = `${newLeft}px`;
+    }
+  } else if (event.key === "ArrowRight") {
+    const newLeft = left + tile.size; 
+    const maxLeft = widthBoard - tile.size; 
+    if (newLeft <= maxLeft) { 
+      activeBlock.style.left = `${newLeft}px`;
+    }
+  }
+});
+
+
+let check = document.getElementById("checking");
+check.addEventListener("click", createAndAddBlock);
+
