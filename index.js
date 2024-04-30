@@ -128,16 +128,15 @@ function moveBlockDown(block, intervalTime) {
       bottom -= tile.size; 
       if (bottom < -heightBoard) {
         clearInterval(moveInterval);
-
+        const lastBlock = blockArray[blockArray.length - 1];
+        lastBlock.isMoving = false;
+        createAndAddBlock();
       } else {
         block.style.bottom = `${bottom}px`;
       }
     }, intervalTime);
   }
   startInterval();
-  return {
-    stop: () => clearInterval(moveInterval),
-  };
 }
 
 function layoutBagSelector(bag) {
@@ -162,7 +161,7 @@ const blockArray = [];
 function createAndAddBlock() {
   const selectedBlock = blockSelector();
   const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
-  blockArray.push(newBlock);
+  blockArray.push({ block: newBlock, isMoving: true });
   newBlock.style.position = "absolute"; 
   newBlock.style.bottom = "0px"; 
   newBlock.style.left = `${4 * tile.size}px`; 
@@ -174,9 +173,20 @@ function createAndAddBlock() {
   console.log(blockArray);
 }
 
+function isBlockMoving() {
+  const activeBlock = blockArray[blockArray.length - 1];
+  return activeBlock && activeBlock.isMoving;
+}
+
 document.addEventListener("keydown", (event) => {
   const activeBlock = blockArray[blockArray.length - 1].block;
+
+  if (!isBlockMoving()) {
+    return;
+  }
+
   let left = parseFloat(activeBlock.style.left); 
+
 
   if (event.key === "ArrowLeft") {
     const newLeft = left - tile.size;
@@ -192,7 +202,4 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-
-let check = document.getElementById("checking");
-check.addEventListener("click", createAndAddBlock);
-
+createAndAddBlock();
