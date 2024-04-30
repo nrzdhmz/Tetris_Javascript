@@ -5,15 +5,15 @@ let nextBlock = document.getElementById("next_block_board");
 let widthBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("width"));
 let heightBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("height"));
 
-console.log(widthBoard);
-console.log(heightBoard);
+// console.log(widthBoard);
+// console.log(heightBoard);
 
 let tile = {
   size: 26,
   isMoving: true 
 };
 
-console.log(tile);
+// console.log(tile);
 
 const boardArr = [];
 
@@ -28,7 +28,7 @@ for (let i = 0; i < numberOfRows; i++) {
   boardArr.push(row);
 }
 
-console.log(boardArr);
+// console.log(boardArr);
 
 
 function createSegment(bottom, left, color) {
@@ -126,12 +126,14 @@ const blockTypes = [
 
 
 function moveBlockDown(block, intervalTime) {
-  let bottom = parseFloat(block.style.bottom || 0);
+  let bottom = parseFloat(block.style.bottom);
+  let left = parseFloat(block.style.left);
   let moveInterval;
 
   function startInterval() {
     moveInterval = setInterval(() => {
       console.log(bottom);
+      console.log(left);
       bottom -= tile.size; 
       if (bottom < -heightBoard) {
         clearInterval(moveInterval);
@@ -155,7 +157,8 @@ function layoutBagSelector(bag) {
     }
     const randomIndex = Math.floor(Math.random() * newBag.length);
     const selectedObject = newBag.splice(randomIndex, 1)[0];
-    console.log(selectedObject);
+    // console.log(selectedObject);
+
     return selectedObject; 
   }
   return selectRandom; 
@@ -181,7 +184,7 @@ function createAndAddBlock() {
 
   const intervalTime = 200; 
   moveBlockDown(newBlock, intervalTime);
-  console.log(blockArray);
+  // console.log(blockArray);
 }
 
 function isBlockMoving() {
@@ -209,8 +212,6 @@ document.addEventListener("keydown", (event) => {
     const newLeft = left + tile.size; 
     if (newLeft <= maxLeft) { 
       activeBlock.style.left = `${newLeft}px`;
-    }else if (event.key === "ArrowUp") {
-      activeBlock.style.tranform = "rotate(90deg)";
     }
   }
 });
