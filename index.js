@@ -59,6 +59,7 @@ const blockTypes = [
       [21 * tile.size, 0],
       [20 * tile.size, 0],
     ],
+    maxLeft: tile.size ,
     color: "skyblue",
   },
   {
@@ -68,6 +69,7 @@ const blockTypes = [
       [21 * tile.size, tile.size],
       [20 * tile.size, tile.size],
     ],
+    maxLeft: 2 * tile.size ,
     color: "orange",
   },
   {
@@ -77,6 +79,7 @@ const blockTypes = [
       [20 * tile.size, 0],
       [20 * tile.size, tile.size],
     ],
+    maxLeft: 2 * tile.size ,
     color: "yellow",
   },
   {
@@ -86,6 +89,7 @@ const blockTypes = [
       [20 * tile.size, 0],
       [20 * tile.size, tile.size],
     ],
+    maxLeft: 3 * tile.size ,
     color: "green",
   },
   {
@@ -95,6 +99,7 @@ const blockTypes = [
       [20 * tile.size, tile.size],
       [20 * tile.size, 2 * tile.size],
     ],
+    maxLeft: 3 * tile.size ,
     color: "pink",
   },
   {
@@ -104,6 +109,7 @@ const blockTypes = [
       [20 * tile.size, tile.size],
       [20 * tile.size, 0],
     ],
+    maxLeft: 2 * tile.size ,
     color: "blue",
   },
   {
@@ -113,6 +119,7 @@ const blockTypes = [
       [21 * tile.size, 2 * tile.size],
       [20 * tile.size, tile.size],
     ],
+    maxLeft: 3 * tile.size ,
     color: "purple",
   },
 ];
@@ -158,10 +165,14 @@ const blockSelector = layoutBagSelector(blockTypes);
 
 const blockArray = [];
 
+let currentBlockInfo;
+
+
 function createAndAddBlock() {
   const selectedBlock = blockSelector();
   const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
   blockArray.push({ block: newBlock, isMoving: true });
+  currentBlockInfo = { block: newBlock, maxLeft: selectedBlock.maxLeft };
   newBlock.style.position = "absolute"; 
   newBlock.style.bottom = "0px"; 
   newBlock.style.left = `${4 * tile.size}px`; 
@@ -179,14 +190,15 @@ function isBlockMoving() {
 }
 
 document.addEventListener("keydown", (event) => {
-  const activeBlock = blockArray[blockArray.length - 1].block;
 
   if (!isBlockMoving()) {
     return;
   }
 
-  let left = parseFloat(activeBlock.style.left); 
+  const activeBlock = currentBlockInfo.block;
+  const maxLeft = widthBoard - currentBlockInfo.maxLeft;
 
+  let left = parseFloat(activeBlock.style.left); 
 
   if (event.key === "ArrowLeft") {
     const newLeft = left - tile.size;
@@ -195,9 +207,10 @@ document.addEventListener("keydown", (event) => {
     }
   } else if (event.key === "ArrowRight") {
     const newLeft = left + tile.size; 
-    const maxLeft = widthBoard - tile.size; 
     if (newLeft <= maxLeft) { 
       activeBlock.style.left = `${newLeft}px`;
+    }else if (event.key === "ArrowUp") {
+      activeBlock.style.tranform = "rotate(90deg)";
     }
   }
 });
