@@ -6,6 +6,8 @@ let nextBlock = document.getElementById("next_block_board");
 let widthBoard = window.getComputedStyle(gameBoard).getPropertyValue("width");
 let heightBoard = window.getComputedStyle(gameBoard).getPropertyValue("height");
 
+let colorBag = ["purple","pink","orange","yellow","green","skyblue","blue"];
+
 console.log(widthBoard);
 console.log(heightBoard);
 
@@ -100,10 +102,30 @@ const purpleLayout = [
   [tile.size, tile.size],
 ];
 
-// gameBoard.appendChild(createBlock("purple", purpleLayout));
-// gameBoard.appendChild(createBlock("orange", orangeLayout));
-gameBoard.appendChild(createBlock("yellow", yellowLayout));
-// gameBoard.appendChild(createBlock("green", greenLayout));
-// gameBoard.appendChild(createBlock("skyblue", skyblueLayout));
-// gameBoard.appendChild(createBlock("pink", pinkLayout));
-// gameBoard.appendChild(createBlock("blue", blueLayout));
+function moveBlockDown(block, intervalTime) {
+  let top = parseFloat(block.style.top || 0);
+  
+  const moveInterval = setInterval(() => {
+    top += tile.size; 
+    
+    if (top + tile.size > parseFloat(heightBoard)) {
+      clearInterval(moveInterval);
+      top = parseFloat(heightBoard) - tile.size;
+    }
+
+    block.style.top = `${top}px`; 
+  }, intervalTime);
+
+  return moveInterval;
+}
+
+
+const newBlock = createBlock("purple", purpleLayout);
+gameBoard.appendChild(newBlock);
+
+newBlock.style.position = "absolute";
+newBlock.style.top = "0px"; 
+newBlock.style.left = `${4*tile.size}px`;  
+
+const intervalTime = 300;
+const blockMovement = moveBlockDown(newBlock, intervalTime);
