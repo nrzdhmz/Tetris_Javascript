@@ -6,8 +6,6 @@ let nextBlock = document.getElementById("next_block_board");
 let widthBoard = window.getComputedStyle(gameBoard).getPropertyValue("width");
 let heightBoard = window.getComputedStyle(gameBoard).getPropertyValue("height");
 
-let colorBag = ["purple","pink","orange","yellow","green","skyblue","blue"];
-
 console.log(widthBoard);
 console.log(heightBoard);
 
@@ -53,54 +51,73 @@ function createBlock(color, layout) {
   return collection;
 }
 
-const skyblueLayout = [
-  [0, 0],
-  [tile.size, 0],
-  [2*tile.size, 0],
-  [3*tile.size, 0],
+
+const blockTypes = [
+  {
+    layout: [
+      [0, 0],
+      [tile.size, 0],
+      [2 * tile.size, 0],
+      [3 * tile.size, 0],
+    ],
+    color: "skyblue",
+  },
+  {
+    layout: [
+      [0, 0],
+      [tile.size, 0],
+      [0, tile.size],
+      [tile.size, tile.size],
+    ],
+    color: "orange",
+  },
+  {
+    layout: [
+      [0, 0],
+      [tile.size, 0],
+      [2 * tile.size, 0],
+      [2 * tile.size, tile.size],
+    ],
+    color: "yellow",
+  },
+  {
+    layout: [
+      [0, tile.size],
+      [0, 2 * tile.size],
+      [tile.size, 0],
+      [tile.size, tile.size],
+    ],
+    color: "green",
+  },
+  {
+    layout: [
+      [0, 0],
+      [0, tile.size],
+      [tile.size, tile.size],
+      [tile.size, 2 * tile.size],
+    ],
+    color: "pink",
+  },
+  {
+    layout: [
+      [0, tile.size],
+      [tile.size, tile.size],
+      [2 * tile.size, tile.size],
+      [2 * tile.size, 0],
+    ],
+    color: "blue",
+  },
+  {
+    layout: [
+      [0, 0],
+      [0, tile.size],
+      [0, 2 * tile.size],
+      [tile.size, tile.size],
+    ],
+    color: "purple",
+  },
 ];
 
-const orangeLayout = [
-  [0, 0],
-  [tile.size, 0],
-  [0, tile.size],
-  [tile.size, tile.size],
-];
-
-const yellowLayout = [
-  [0, 0],
-  [tile.size, 0],
-  [2*tile.size, 0],
-  [2*tile.size, tile.size],
-];
-
-const greenLayout = [
-  [0, tile.size],
-  [0, 2*tile.size],
-  [tile.size, 0],
-  [tile.size, tile.size],
-];
-
-const pinkLayout = [
-  [0, 0],
-  [0, tile.size],
-  [tile.size, tile.size],
-  [tile.size, 2*tile.size],
-];
-
-const blueLayout = [
-  [0, tile.size],
-  [tile.size, tile.size],
-  [2*tile.size, tile.size],
-  [2*tile.size, 0],
-];
-
-const purpleLayout = [
-  [0, 0],
-  [0, tile.size],
-  [0, 2*tile.size],
-  [tile.size, tile.size],
-];
 
 function moveBlockDown(block, intervalTime) {
   let top = parseFloat(block.style.top || 0);
@@ -120,8 +137,20 @@ function moveBlockDown(block, intervalTime) {
 }
 
 
-const newBlock = createBlock("purple", purpleLayout);
+function layoutBagSelect(bag) {
+  const randomIndex = Math.floor(Math.random() * bag.length);
+  const selectedObject = bag[randomIndex];
+  return selectedObject;
+}
+
+
+
+const selectedBlock = layoutBagSelect(blockTypes);
+const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
+
 gameBoard.appendChild(newBlock);
+
+
 
 newBlock.style.position = "absolute";
 newBlock.style.top = "0px"; 
