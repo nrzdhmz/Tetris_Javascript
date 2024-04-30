@@ -28,6 +28,7 @@ body {
   background-color: black;
   border: 5px solid #3e5eba;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
 }
 
 #score_board{
@@ -142,8 +143,8 @@ body {
   );
 }
 #checking{
-  width: 100px;
-  height: 40px;
+  width: 300px;
+  height: 100px;
   position: absolute;
   right: 100px;
   bottom: 100px;

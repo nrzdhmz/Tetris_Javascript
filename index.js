@@ -3,8 +3,8 @@ let scoreBoard = document.getElementById("score_board");
 let nextBlock = document.getElementById("next_block_board");
 
 
-let widthBoard = window.getComputedStyle(gameBoard).getPropertyValue("width");
-let heightBoard = window.getComputedStyle(gameBoard).getPropertyValue("height");
+let widthBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("width"));
+let heightBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("height"));
 
 console.log(widthBoard);
 console.log(heightBoard);
@@ -18,8 +18,8 @@ console.log(tile);
 
 const boardArr = [];
 
-const numberOfColumns = Math.floor(parseFloat(widthBoard) / tile.size);
-const numberOfRows = Math.floor(parseFloat(heightBoard) / tile.size);
+const numberOfColumns = Math.floor(widthBoard / tile.size);
+const numberOfRows = Math.floor(heightBoard / tile.size);
 
 for (let i = 0; i < numberOfRows; i++) {
   const row = [];
@@ -32,10 +32,10 @@ for (let i = 0; i < numberOfRows; i++) {
 console.log(boardArr);
 
 
-function createSegment(top, left, color) {
+function createSegment(bottom, left, color) {
   const segment = document.createElement("div");
   segment.className = `block ${color}-color`;
-  segment.style.top = `${top}px`;
+  segment.style.bottom = `${bottom}px`;
   segment.style.left = `${left}px`;
   return segment;
 }
@@ -44,8 +44,8 @@ function createBlock(color, layout) {
   const collection = document.createElement("div");
   collection.className = "block-group";
 
-  layout.forEach(([top, left]) => {
-    collection.appendChild(createSegment(top, left, color));
+  layout.forEach(([bottom, left]) => {
+    collection.appendChild(createSegment(bottom, left, color));
   });
 
   return collection;
@@ -55,64 +55,64 @@ function createBlock(color, layout) {
 const blockTypes = [
   {
     layout: [
-      [0, 0],
-      [tile.size, 0],
-      [2 * tile.size, 0],
-      [3 * tile.size, 0],
+      [23 * tile.size, 0],
+      [22 * tile.size, 0],
+      [21 * tile.size, 0],
+      [20 * tile.size, 0],
     ],
     color: "skyblue",
   },
   {
     layout: [
-      [0, 0],
-      [tile.size, 0],
-      [0, tile.size],
-      [tile.size, tile.size],
+      [21 * tile.size, 0],
+      [20 * tile.size, 0],
+      [21 * tile.size, tile.size],
+      [20 * tile.size, tile.size],
     ],
     color: "orange",
   },
   {
     layout: [
-      [0, 0],
-      [tile.size, 0],
-      [2 * tile.size, 0],
-      [2 * tile.size, tile.size],
+      [22 * tile.size, 0],
+      [21 * tile.size, 0],
+      [20 * tile.size, 0],
+      [20 * tile.size, tile.size],
     ],
     color: "yellow",
   },
   {
     layout: [
-      [0, tile.size],
-      [0, 2 * tile.size],
-      [tile.size, 0],
-      [tile.size, tile.size],
+      [21 * tile.size, tile.size],
+      [21 * tile.size, 2 * tile.size],
+      [20 * tile.size, 0],
+      [20 * tile.size, tile.size],
     ],
     color: "green",
   },
   {
     layout: [
-      [0, 0],
-      [0, tile.size],
-      [tile.size, tile.size],
-      [tile.size, 2 * tile.size],
+      [21 * tile.size, 0],
+      [21 * tile.size, tile.size],
+      [20 * tile.size, tile.size],
+      [20 * tile.size, 2 * tile.size],
     ],
     color: "pink",
   },
   {
     layout: [
-      [0, tile.size],
-      [tile.size, tile.size],
-      [2 * tile.size, tile.size],
-      [2 * tile.size, 0],
+      [22 * tile.size, tile.size],
+      [21 * tile.size, tile.size],
+      [20 * tile.size, tile.size],
+      [20 * tile.size, 0],
     ],
     color: "blue",
   },
   {
     layout: [
-      [0, 0],
-      [0, tile.size],
-      [0, 2 * tile.size],
-      [tile.size, tile.size],
+      [21 * tile.size, 0],
+      [21 * tile.size, tile.size],
+      [21 * tile.size, 2 * tile.size],
+      [20 * tile.size, tile.size],
     ],
     color: "purple",
   },
@@ -120,17 +120,16 @@ const blockTypes = [
 
 
 function moveBlockDown(block, intervalTime) {
-  let top = parseFloat(block.style.top || 0);
-  
+  let bottom = parseFloat(block.style.bottom || 0);
   const moveInterval = setInterval(() => {
-    top += tile.size; 
-    
-    if (top + tile.size > parseFloat(heightBoard)) {
+    console.log(bottom);
+    bottom -= tile.size; 
+    if (bottom < -heightBoard) {
       clearInterval(moveInterval);
-      top = parseFloat(heightBoard) - tile.size;
+      bottom -= tile.size;
+    }else{
+      block.style.bottom = `${bottom}px`; 
     }
-
-    block.style.top = `${top}px`; 
   }, intervalTime);
 
   return moveInterval;
@@ -154,32 +153,32 @@ function layoutBagSelector(bag) {
 
 const blockSelector = layoutBagSelector(blockTypes);
 
-const selectedBlock = blockSelector();
-const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
+// const selectedBlock = blockSelector();
+// const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
 
-newBlock.style.position = "absolute"; 
-newBlock.style.top = "0px"; 
-newBlock.style.left = `${4 * tile.size}px`; 
+// newBlock.style.position = "absolute"; 
+// newBlock.style.bottom = "0px"; 
+// newBlock.style.left = `${4 * tile.size}px`; 
 
-gameBoard.appendChild(newBlock); 
+// gameBoard.appendChild(newBlock); 
 
-const intervalTime = 300; 
-const blockMovement = moveBlockDown(newBlock, intervalTime); 
+// const intervalTime = 400; 
+// const blockMovement = moveBlockDown(newBlock, intervalTime); 
 
 
-// function createAndAddBlock() {
-//   const selectedBlock = blockSelector();
-//   const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
+function createAndAddBlock() {
+  const selectedBlock = blockSelector();
+  const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
 
-//   newBlock.style.position = "absolute"; 
-//   newBlock.style.top = "0px"; 
-//   newBlock.style.left = `${4 * tile.size}px`; 
+  newBlock.style.position = "absolute"; 
+  newBlock.style.bottom = "0px"; 
+  newBlock.style.left = `${4 * tile.size}px`; 
 
-//   gameBoard.appendChild(newBlock); 
+  gameBoard.appendChild(newBlock); 
 
-//   const intervalTime = 300; 
-//   const blockMovement = moveBlockDown(newBlock, intervalTime); 
-// }
+  const intervalTime = 300; 
+  const blockMovement = moveBlockDown(newBlock, intervalTime); 
+}
 
-// let check = document.getElementById("checking"); 
-// check.addEventListener("click", createAndAddBlock); 
+let check = document.getElementById("checking"); 
+check.addEventListener("click", createAndAddBlock); 
