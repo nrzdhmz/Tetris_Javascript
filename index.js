@@ -199,7 +199,6 @@ function clearRows() {
   const divElements = Array.from(document.getElementsByTagName("div"));
   const classCount = {};
 
-  // Count segments in each row based on their class name starting with "bottom-".
   divElements.forEach((div) => {
     div.classList.forEach((className) => {
       if (className.startsWith("bottom-")) {
@@ -211,41 +210,51 @@ function clearRows() {
   const classesToDelete = [];
   for (const className in classCount) {
     if (classCount[className] >= 10) {
-      classesToDelete.push(className); 
+      classesToDelete.push(className);
     }
   }
 
   if (classesToDelete.length > 0) {
-    // Delete segments in rows that need to be cleared.
     classesToDelete.forEach((className) => {
       const elementsToDelete = document.getElementsByClassName(className);
       while (elementsToDelete.length > 0) {
-        elementsToDelete[0].parentNode.removeChild(elementsToDelete[0]); 
+        const element = elementsToDelete[0];
+        const parentNode = element.parentNode;
+        parentNode.removeChild(element);
       }
     });
 
-    // Shift all segments above the cleared rows downward.
-    const deletedRowNumbers = classesToDelete.map((className) => parseInt(className.split("-")[1], 10));
+    const deletedRowNumbers = classesToDelete.map((className) =>
+      parseInt(className.split("-")[1], 10)
+    );
     const minDeletedRow = Math.min(...deletedRowNumbers);
+    const numRowsCleared = classesToDelete.length;
 
     divElements.forEach((div) => {
       div.classList.forEach((className) => {
         if (className.startsWith("bottom-")) {
           const rowNumber = parseInt(className.split("-")[1], 10);
           if (rowNumber > minDeletedRow) {
-            // Shift down by 26 pixels for each deleted row below it.
-            const newBottom = parseFloat(div.style.bottom) - 26 * classesToDelete.length;
+            const newBottom = parseFloat(div.style.bottom) - 26 * numRowsCleared;
             div.style.bottom = `${newBottom}px`;
 
-            // Update class name to reflect new bottom value.
             div.classList.remove(className);
             div.classList.add(`bottom-${newBottom}`);
           }
         }
       });
     });
+
+    for (let i = 0; i < stoppedSegments.length; i++) {
+      const segment = stoppedSegments[i];
+      if (segment.bottom >= minDeletedRow * 26) {
+        segment.bottom -= 26 * numRowsCleared;
+      }
+    }
   }
 }
+
+
 
 
 function layoutBagSelector(bag) {
