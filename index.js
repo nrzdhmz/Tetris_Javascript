@@ -69,7 +69,7 @@ const blockTypes = [
       [21 * tile.size, tile.size],
       [20 * tile.size, tile.size],
     ],
-    maxLeft: 2 * tile.size ,
+    maxLeft: 1 * tile.size ,
     color: "orange",
   },
   {
@@ -79,7 +79,7 @@ const blockTypes = [
       [20 * tile.size, 0],
       [20 * tile.size, tile.size],
     ],
-    maxLeft: 2 * tile.size ,
+    maxLeft: 1 * tile.size ,
     color: "yellow",
   },
   {
@@ -89,7 +89,7 @@ const blockTypes = [
       [20 * tile.size, 0],
       [20 * tile.size, tile.size],
     ],
-    maxLeft: 3 * tile.size ,
+    maxLeft: 1 * tile.size ,
     color: "green",
   },
   {
@@ -99,7 +99,7 @@ const blockTypes = [
       [20 * tile.size, tile.size],
       [20 * tile.size, 2 * tile.size],
     ],
-    maxLeft: 3 * tile.size ,
+    maxLeft: 1 * tile.size ,
     color: "pink",
   },
   {
@@ -109,7 +109,7 @@ const blockTypes = [
       [20 * tile.size, tile.size],
       [20 * tile.size, 0],
     ],
-    maxLeft: 2 * tile.size ,
+    maxLeft: 1 * tile.size ,
     color: "blue",
   },
   {
@@ -119,18 +119,42 @@ const blockTypes = [
       [21 * tile.size, 2 * tile.size],
       [20 * tile.size, tile.size],
     ],
-    maxLeft: 3 * tile.size ,
+    maxLeft: 1 * tile.size ,
     color: "purple",
   },
 ];
 
+const stoppedSegments = [];
 
-function checkCollision(segmentBottom) {
+function checkCollision(segmentBottom, segmentLeft) {
   if (segmentBottom < 0) {
     return true;
   }
 
+  for (const segment of stoppedSegments) {
+    if (
+      segment.bottom === segmentBottom && 
+      segment.left === segmentLeft
+    ) {
+      return true;
+    }
+  }
+
   return false;
+}
+
+function groupRows(stoppedSegments) {
+  const rows = [];
+
+  for (const segment of stoppedSegments) {
+    const bottom = segment.bottom;
+
+    if (!rows[bottom]) {
+      rows[bottom] = [];
+    }
+    rows[bottom].push(segment);
+  }
+  return rows;
 }
 
 function moveBlockDown(blockGroup, intervalTime) {
@@ -141,11 +165,9 @@ function moveBlockDown(blockGroup, intervalTime) {
       let canMove = true;
 
       for (const segment of blockGroup.children) {
-        let bottom = parseFloat(segment.style.bottom);
-
-        bottom -= tile.size; 
-
-        if (checkCollision(bottom)) {
+        let bottom = parseFloat(segment.style.bottom) - tile.size;
+        let left = parseFloat(segment.style.left);
+        if (checkCollision(bottom, left)) {
           canMove = false;
           break;
         }
@@ -158,16 +180,30 @@ function moveBlockDown(blockGroup, intervalTime) {
         }
       } else {
         clearInterval(moveInterval);
-        const lastBlock = blockArray[blockArray.length - 1];
-        lastBlock.isMoving = false;
-        
+
+        while (blockGroup.children.length > 0) {
+          const segment = blockGroup.children[0];
+          const bottom = parseFloat(segment.style.bottom);
+          const left = parseFloat(segment.style.left);
+
+          segment.style.position = "absolute";
+          gameBoard.appendChild(segment);
+
+          stoppedSegments.push({ bottom, left });
+        }
+
+        gameBoard.removeChild(blockGroup);
+
+        let rowArray = groupRows(stoppedSegments);
+        console.log(rowArray);
         createAndAddBlock();
       }
     }, intervalTime);
   }
 
-  startInterval(); 
+  startInterval();
 }
+
 
 
 function layoutBagSelector(bag) {
@@ -192,7 +228,6 @@ const blockArray = [];
 
 let currentBlockInfo;
 
-
 function createAndAddBlock() {
   const selectedBlock = blockSelector();
   const newBlock = createBlock(selectedBlock.color, selectedBlock.layout);
@@ -200,13 +235,14 @@ function createAndAddBlock() {
   currentBlockInfo = { block: newBlock, maxLeft: selectedBlock.maxLeft };
   newBlock.style.position = "absolute"; 
   newBlock.style.bottom = "0px"; 
-  newBlock.style.left = `${4 * tile.size}px`; 
+  newBlock.style.left = "0px"; 
 
   gameBoard.appendChild(newBlock); 
 
   const intervalTime = 200; 
   moveBlockDown(newBlock, intervalTime);
   // console.log(blockArray);
+  // console.log(stoppedSegments);  
 }
 
 function isBlockMoving() {
@@ -215,25 +251,47 @@ function isBlockMoving() {
 }
 
 document.addEventListener("keydown", (event) => {
-
   if (!isBlockMoving()) {
     return;
   }
 
   const activeBlock = currentBlockInfo.block;
   const maxLeft = widthBoard - currentBlockInfo.maxLeft;
-
-  let left = parseFloat(activeBlock.style.left); 
+  const tileSize = tile.size; 
 
   if (event.key === "ArrowLeft") {
-    const newLeft = left - tile.size;
-    if (newLeft >= 0) { 
-      activeBlock.style.left = `${newLeft}px`;
+    let canMove = true;
+    
+    for (const segment of activeBlock.children) {
+      let left = parseFloat(segment.style.left);
+      if (left - tileSize < 0) {
+        canMove = false;
+        break;
+      }
+    }
+
+    if (canMove) {
+      for (const segment of activeBlock.children) {
+        let left = parseFloat(segment.style.left);
+        segment.style.left = `${left - tileSize}px`;
+      }
     }
   } else if (event.key === "ArrowRight") {
-    const newLeft = left + tile.size; 
-    if (newLeft <= maxLeft) { 
-      activeBlock.style.left = `${newLeft}px`;
+    let canMove = true;
+
+    for (const segment of activeBlock.children) {
+      let left = parseFloat(segment.style.left);
+      if (left + tileSize > maxLeft) {
+        canMove = false; 
+        break;
+      }
+    }
+
+    if (canMove) {
+      for (const segment of activeBlock.children) {
+        let left = parseFloat(segment.style.left);
+        segment.style.left = `${left + tileSize}px`;
+      }
     }
   }
 });
