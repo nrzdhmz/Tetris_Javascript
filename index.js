@@ -144,10 +144,10 @@ function checkCollision(segmentBottom, segmentLeft) {
 }
 
 function groupRows(stoppedSegments) {
-  const rows = [];
+  const rows = {};
 
   for (const segment of stoppedSegments) {
-    const bottom = segment.bottom;
+    const bottom = (segment.bottom)/26;
 
     if (!rows[bottom]) {
       rows[bottom] = [];
@@ -195,8 +195,10 @@ function moveBlockDown(blockGroup, intervalTime) {
         gameBoard.removeChild(blockGroup);
 
         let rowArray = groupRows(stoppedSegments);
-        console.log(rowArray);
-        createAndAddBlock();
+        
+        if(15>Object.keys(rowArray).length>0){
+          createAndAddBlock();
+        }
       }
     }, intervalTime);
   }
