@@ -125,28 +125,50 @@ const blockTypes = [
 ];
 
 
-function moveBlockDown(block, intervalTime) {
-  let bottom = parseFloat(block.style.bottom);
-  let left = parseFloat(block.style.left);
+function checkCollision(segmentBottom) {
+  if (segmentBottom < 0) {
+    return true;
+  }
+
+  return false;
+}
+
+function moveBlockDown(blockGroup, intervalTime) {
   let moveInterval;
 
   function startInterval() {
     moveInterval = setInterval(() => {
-      console.log(bottom);
-      console.log(left);
-      bottom -= tile.size; 
-      if (bottom < -heightBoard) {
+      let canMove = true;
+
+      for (const segment of blockGroup.children) {
+        let bottom = parseFloat(segment.style.bottom);
+
+        bottom -= tile.size; 
+
+        if (checkCollision(bottom)) {
+          canMove = false;
+          break;
+        }
+      }
+
+      if (canMove) {
+        for (const segment of blockGroup.children) {
+          let bottom = parseFloat(segment.style.bottom);
+          segment.style.bottom = `${bottom - tile.size}px`;
+        }
+      } else {
         clearInterval(moveInterval);
         const lastBlock = blockArray[blockArray.length - 1];
         lastBlock.isMoving = false;
+        
         createAndAddBlock();
-      } else {
-        block.style.bottom = `${bottom}px`;
       }
     }, intervalTime);
   }
-  startInterval();
+
+  startInterval(); 
 }
+
 
 function layoutBagSelector(bag) {
   let newBag = [...bag];

@@ -66,7 +66,7 @@ body {
 
 .block-group {
   display: flex; 
-  position: relative; 
+  /* position: relative;  */
 }
 
 .block{
