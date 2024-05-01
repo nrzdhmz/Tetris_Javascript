@@ -5,31 +5,15 @@ let nextBlock = document.getElementById("next_block_board");
 let widthBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("width"));
 let heightBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("height"));
 
-// console.log(widthBoard);
-// console.log(heightBoard);
-
 let tile = {
   size: 26,
   isMoving: true 
 };
 
-// console.log(tile);
 
-const boardArr = [];
-
-const numberOfColumns = Math.floor(widthBoard / tile.size);
-const numberOfRows = Math.floor(heightBoard / tile.size);
-
-for (let i = 0; i < numberOfRows; i++) {
-  const row = [];
-  for (let j = 0; j < numberOfColumns; j++) {
-    row.push({ ...tile });
-  }
-  boardArr.push(row);
+function getBottomClassName(bottom) {
+  return `bottom-${bottom}`;
 }
-
-// console.log(boardArr);
-
 
 function createSegment(bottom, left, color) {
   const segment = document.createElement("div");
@@ -38,6 +22,7 @@ function createSegment(bottom, left, color) {
   segment.style.left = `${left}px`;
   return segment;
 }
+
 
 function createBlock(color, layout) {
   const collection = document.createElement("div");
@@ -52,16 +37,16 @@ function createBlock(color, layout) {
 
 
 const blockTypes = [
-  {
-    layout: [
-      [23 * tile.size, 0],
-      [22 * tile.size, 0],
-      [21 * tile.size, 0],
-      [20 * tile.size, 0],
-    ],
-    maxLeft: tile.size ,
-    color: "skyblue",
-  },
+  // {
+  //   layout: [
+  //     [23 * tile.size, 0],
+  //     [22 * tile.size, 0],
+  //     [21 * tile.size, 0],
+  //     [20 * tile.size, 0],
+  //   ],
+  //   maxLeft: tile.size ,
+  //   color: "skyblue",
+  // },
   {
     layout: [
       [21 * tile.size, 0],
@@ -72,56 +57,56 @@ const blockTypes = [
     maxLeft: 1 * tile.size ,
     color: "orange",
   },
-  {
-    layout: [
-      [22 * tile.size, 0],
-      [21 * tile.size, 0],
-      [20 * tile.size, 0],
-      [20 * tile.size, tile.size],
-    ],
-    maxLeft: 1 * tile.size ,
-    color: "yellow",
-  },
-  {
-    layout: [
-      [21 * tile.size, tile.size],
-      [21 * tile.size, 2 * tile.size],
-      [20 * tile.size, 0],
-      [20 * tile.size, tile.size],
-    ],
-    maxLeft: 1 * tile.size ,
-    color: "green",
-  },
-  {
-    layout: [
-      [21 * tile.size, 0],
-      [21 * tile.size, tile.size],
-      [20 * tile.size, tile.size],
-      [20 * tile.size, 2 * tile.size],
-    ],
-    maxLeft: 1 * tile.size ,
-    color: "pink",
-  },
-  {
-    layout: [
-      [22 * tile.size, tile.size],
-      [21 * tile.size, tile.size],
-      [20 * tile.size, tile.size],
-      [20 * tile.size, 0],
-    ],
-    maxLeft: 1 * tile.size ,
-    color: "blue",
-  },
-  {
-    layout: [
-      [21 * tile.size, 0],
-      [21 * tile.size, tile.size],
-      [21 * tile.size, 2 * tile.size],
-      [20 * tile.size, tile.size],
-    ],
-    maxLeft: 1 * tile.size ,
-    color: "purple",
-  },
+  // {
+  //   layout: [
+  //     [22 * tile.size, 0],
+  //     [21 * tile.size, 0],
+  //     [20 * tile.size, 0],
+  //     [20 * tile.size, tile.size],
+  //   ],
+  //   maxLeft: 1 * tile.size ,
+  //   color: "yellow",
+  // },
+  // {
+  //   layout: [
+  //     [21 * tile.size, tile.size],
+  //     [21 * tile.size, 2 * tile.size],
+  //     [20 * tile.size, 0],
+  //     [20 * tile.size, tile.size],
+  //   ],
+  //   maxLeft: 1 * tile.size ,
+  //   color: "green",
+  // },
+  // {
+  //   layout: [
+  //     [21 * tile.size, 0],
+  //     [21 * tile.size, tile.size],
+  //     [20 * tile.size, tile.size],
+  //     [20 * tile.size, 2 * tile.size],
+  //   ],
+  //   maxLeft: 1 * tile.size ,
+  //   color: "pink",
+  // },
+  // {
+  //   layout: [
+  //     [22 * tile.size, tile.size],
+  //     [21 * tile.size, tile.size],
+  //     [20 * tile.size, tile.size],
+  //     [20 * tile.size, 0],
+  //   ],
+  //   maxLeft: 1 * tile.size ,
+  //   color: "blue",
+  // },
+  // {
+  //   layout: [
+  //     [21 * tile.size, 0],
+  //     [21 * tile.size, tile.size],
+  //     [21 * tile.size, 2 * tile.size],
+  //     [20 * tile.size, tile.size],
+  //   ],
+  //   maxLeft: 1 * tile.size ,
+  //   color: "purple",
+  // },
 ];
 
 const stoppedSegments = [];
@@ -187,6 +172,7 @@ function moveBlockDown(blockGroup, intervalTime) {
           const left = parseFloat(segment.style.left);
 
           segment.style.position = "absolute";
+          segment.className += ` ${getBottomClassName(bottom)}`;
           gameBoard.appendChild(segment);
 
           stoppedSegments.push({ bottom, left });
@@ -195,10 +181,12 @@ function moveBlockDown(blockGroup, intervalTime) {
         gameBoard.removeChild(blockGroup);
 
         let rowArray = groupRows(stoppedSegments);
-        
-        if(15>Object.keys(rowArray).length>0){
+        let maxLength = Object.keys(rowArray).length;
+
+        if (19 > maxLength) {
           createAndAddBlock();
         }
+        clearRows();
       }
     }, intervalTime);
   }
@@ -207,6 +195,37 @@ function moveBlockDown(blockGroup, intervalTime) {
 }
 
 
+function clearRows() {
+  const divElements = document.getElementsByTagName("div");
+  const classCount = {};
+
+  for (const div of divElements) {
+    const classList = div.classList;
+    for (const className of classList) {
+      if (className.startsWith("bottom")) {
+        if (!classCount[className]) {
+          classCount[className] = 1; 
+        } else {
+          classCount[className] += 1;
+        }
+      }
+    }
+  }
+
+  const classesToDelete = [];
+  for (const className in classCount) {
+    if (classCount[className] >= 10) {
+      classesToDelete.push(className); 
+    }
+  }
+
+  for (const className of classesToDelete) {
+    const elementsToDelete = document.getElementsByClassName(className);
+    while (elementsToDelete.length > 0) {
+      elementsToDelete[0].parentNode.removeChild(elementsToDelete[0]); 
+    }
+  }
+}
 
 function layoutBagSelector(bag) {
   let newBag = [...bag];
@@ -241,10 +260,11 @@ function createAndAddBlock() {
 
   gameBoard.appendChild(newBlock); 
 
-  const intervalTime = 200; 
+  const intervalTime = 100; 
   moveBlockDown(newBlock, intervalTime);
   // console.log(blockArray);
-  // console.log(stoppedSegments);  
+  // console.log(stoppedSegments); 
+  // Example usage 
 }
 
 function isBlockMoving() {
@@ -259,14 +279,16 @@ document.addEventListener("keydown", (event) => {
 
   const activeBlock = currentBlockInfo.block;
   const maxLeft = widthBoard - currentBlockInfo.maxLeft;
-  const tileSize = tile.size; 
+  const tileSize = tile.size;
 
-  if (event.key === "ArrowLeft") {
+  if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
     let canMove = true;
-    
+    let direction = event.key === "ArrowLeft" ? -tileSize : tileSize;
+
     for (const segment of activeBlock.children) {
       let left = parseFloat(segment.style.left);
-      if (left - tileSize < 0) {
+      if ((direction < 0 && left + direction < 0) ||
+          (direction > 0 && left + direction > maxLeft)) {
         canMove = false;
         break;
       }
@@ -275,27 +297,12 @@ document.addEventListener("keydown", (event) => {
     if (canMove) {
       for (const segment of activeBlock.children) {
         let left = parseFloat(segment.style.left);
-        segment.style.left = `${left - tileSize}px`;
-      }
-    }
-  } else if (event.key === "ArrowRight") {
-    let canMove = true;
-
-    for (const segment of activeBlock.children) {
-      let left = parseFloat(segment.style.left);
-      if (left + tileSize > maxLeft) {
-        canMove = false; 
-        break;
-      }
-    }
-
-    if (canMove) {
-      for (const segment of activeBlock.children) {
-        let left = parseFloat(segment.style.left);
-        segment.style.left = `${left + tileSize}px`;
+        segment.style.left = `${left + direction}px`;
       }
     }
   }
 });
+
+
 
 createAndAddBlock();
