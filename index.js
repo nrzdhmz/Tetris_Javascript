@@ -37,76 +37,76 @@ function createBlock(color, layout) {
 
 
 const blockTypes = [
-  // {
-  //   layout: [
-  //     [23 * tile.size, 0],
-  //     [22 * tile.size, 0],
-  //     [21 * tile.size, 0],
-  //     [20 * tile.size, 0],
-  //   ],
-  //   maxLeft: tile.size ,
-  //   color: "skyblue",
-  // },
   {
     layout: [
-      [21 * tile.size, 0],
-      [20 * tile.size, 0],
-      [21 * tile.size, tile.size],
-      [20 * tile.size, tile.size],
+      [23 * tile.size, 4*tile.size],
+      [22 * tile.size, 4*tile.size],
+      [21 * tile.size, 4*tile.size],
+      [20 * tile.size, 4*tile.size],
+    ],
+    maxLeft: tile.size ,
+    color: "skyblue",
+  },
+  {
+    layout: [
+      [21 * tile.size, 4*tile.size],
+      [20 * tile.size, 4*tile.size],
+      [21 * tile.size, 5*tile.size],
+      [20 * tile.size, 5*tile.size],
     ],
     maxLeft: 1 * tile.size ,
     color: "orange",
   },
-  // {
-  //   layout: [
-  //     [22 * tile.size, 0],
-  //     [21 * tile.size, 0],
-  //     [20 * tile.size, 0],
-  //     [20 * tile.size, tile.size],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "yellow",
-  // },
-  // {
-  //   layout: [
-  //     [21 * tile.size, tile.size],
-  //     [21 * tile.size, 2 * tile.size],
-  //     [20 * tile.size, 0],
-  //     [20 * tile.size, tile.size],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "green",
-  // },
-  // {
-  //   layout: [
-  //     [21 * tile.size, 0],
-  //     [21 * tile.size, tile.size],
-  //     [20 * tile.size, tile.size],
-  //     [20 * tile.size, 2 * tile.size],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "pink",
-  // },
-  // {
-  //   layout: [
-  //     [22 * tile.size, tile.size],
-  //     [21 * tile.size, tile.size],
-  //     [20 * tile.size, tile.size],
-  //     [20 * tile.size, 0],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "blue",
-  // },
-  // {
-  //   layout: [
-  //     [21 * tile.size, 0],
-  //     [21 * tile.size, tile.size],
-  //     [21 * tile.size, 2 * tile.size],
-  //     [20 * tile.size, tile.size],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "purple",
-  // },
+  {
+    layout: [
+      [22 * tile.size, 4*tile.size],
+      [21 * tile.size, 4*tile.size],
+      [20 * tile.size, 4*tile.size],
+      [20 * tile.size, 5*tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "yellow",
+  },
+  {
+    layout: [
+      [21 * tile.size, 5*tile.size],
+      [21 * tile.size, 6 * tile.size],
+      [20 * tile.size, 4*tile.size],
+      [20 * tile.size, 5*tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "green",
+  },
+  {
+    layout: [
+      [21 * tile.size, 4*tile.size],
+      [21 * tile.size, 5*tile.size],
+      [20 * tile.size, 5*tile.size],
+      [20 * tile.size, 6 * tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "pink",
+  },
+  {
+    layout: [
+      [22 * tile.size, 5*tile.size],
+      [21 * tile.size, 5*tile.size],
+      [20 * tile.size, 5*tile.size],
+      [20 * tile.size, 4*tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "blue",
+  },
+  {
+    layout: [
+      [21 * tile.size, 4*tile.size],
+      [21 * tile.size, 5*tile.size],
+      [21 * tile.size, 6 * tile.size],
+      [20 * tile.size, 5*tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "purple",
+  },
 ];
 
 const stoppedSegments = [];
@@ -197,62 +197,66 @@ function moveBlockDown(blockGroup, intervalTime) {
 
 function clearRows() {
   const divElements = Array.from(document.getElementsByTagName("div"));
-  const classCount = {};
+  const rowSegmentCount = {};
 
+  // Step 1: Count the number of segments in each row
   divElements.forEach((div) => {
     div.classList.forEach((className) => {
       if (className.startsWith("bottom-")) {
-        classCount[className] = (classCount[className] || 0) + 1;
+        const rowNumber = parseInt(className.split("-")[1], 10);
+        rowSegmentCount[rowNumber] = (rowSegmentCount[rowNumber] || 0) + 1;
       }
     });
   });
 
-  const classesToDelete = [];
-  for (const className in classCount) {
-    if (classCount[className] >= 10) {
-      classesToDelete.push(className);
-    }
-  }
+  const rowsToDelete = Object.keys(rowSegmentCount)
+    .map((num) => parseInt(num))
+    .filter((row) => rowSegmentCount[row] >= 10); // Full rows
 
-  if (classesToDelete.length > 0) {
-    classesToDelete.forEach((className) => {
-      const elementsToDelete = document.getElementsByClassName(className);
+  if (rowsToDelete.length > 0) {
+    // Step 2: Remove all segments in the cleared rows
+    rowsToDelete.forEach((rowNumber) => {
+      const rowClass = `bottom-${rowNumber * tile.size}`;
+      const elementsToDelete = document.getElementsByClassName(rowClass);
       while (elementsToDelete.length > 0) {
-        const element = elementsToDelete[0];
-        const parentNode = element.parentNode;
-        parentNode.removeChild(element);
+        elementsToDelete[0].parentNode.removeChild(elementsToDelete[0]);
       }
     });
 
-    const deletedRowNumbers = classesToDelete.map((className) =>
-      parseInt(className.split("-")[1], 10)
-    );
-    const minDeletedRow = Math.min(...deletedRowNumbers);
-    const numRowsCleared = classesToDelete.length;
+    const rowsDeleted = rowsToDelete.length;
+    const minRowToDelete = Math.min(...rowsToDelete);
 
+    // Step 3: Shift down all segments above the cleared rows
     divElements.forEach((div) => {
       div.classList.forEach((className) => {
         if (className.startsWith("bottom-")) {
-          const rowNumber = parseInt(className.split("-")[1], 10);
-          if (rowNumber > minDeletedRow) {
-            const newBottom = parseFloat(div.style.bottom) - 26 * numRowsCleared;
+          const currentRow = parseInt(className.split("-")[1], 10) / 26;
+          if (currentRow > minRowToDelete) {
+            const newBottom = parseFloat(div.style.bottom) - (26 * rowsDeleted);
             div.style.bottom = `${newBottom}px`;
 
+            // Ensure class name reflects the new position
+            const newClassName = `bottom-${Math.floor(newBottom)}`;
             div.classList.remove(className);
-            div.classList.add(`bottom-${newBottom}`);
+            div.classList.add(newClassName);
           }
         }
       });
     });
 
-    for (let i = 0; i < stoppedSegments.length; i++) {
+    // Step 4: Update `stoppedSegments` with correct positions and remove any segments in cleared rows
+    for (let i = stoppedSegments.length - 1; i >= 0; i--) {
       const segment = stoppedSegments[i];
-      if (segment.bottom >= minDeletedRow * 26) {
-        segment.bottom -= 26 * numRowsCleared;
+      const rowNumber = segment.bottom / 26;
+      if (rowNumber > minRowToDelete) {
+        segment.bottom -= (26 * rowsDeleted);
+      } else if (rowsToDelete.includes(rowNumber)) {
+        stoppedSegments.splice(i, 1); // Remove segment from cleared row
       }
     }
   }
 }
+
 
 
 
@@ -290,7 +294,7 @@ function createAndAddBlock() {
 
   gameBoard.appendChild(newBlock); 
 
-  const intervalTime = 100; 
+  const intervalTime = 180; 
   moveBlockDown(newBlock, intervalTime);
   // console.log(blockArray);
   // console.log(stoppedSegments); 
