@@ -239,7 +239,8 @@ function clearRows() {
     const deletedRowNumbers = classesToDelete.map((className) => 
       parseInt(className.split("-")[1], 10)
     );
-    const minDeletedRow = Math.min(...deletedRowNumbers);
+    const minDeletedRow = Math.max(...deletedRowNumbers);
+    // console.log(minDeletedRow);
     const numRowsCleared = classesToDelete.length;
 
     // Move the other segments down by the appropriate amount
@@ -254,7 +255,8 @@ function clearRows() {
       div.classList.forEach((className) => {
         if (className.startsWith("bottom-")) {
           const rowNumber = parseInt(className.split("-")[1], 10);
-          if (rowNumber > minDeletedRow) {
+          console.log(rowNumber);
+          if (rowNumber >= minDeletedRow) {
             const newBottom = parseFloat(div.style.bottom) - numRowsCleared * tile.size;
             div.style.bottom = `${newBottom}px`;
 
