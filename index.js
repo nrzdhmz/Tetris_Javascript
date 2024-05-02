@@ -2,6 +2,9 @@ let gameBoard = document.getElementById("game_board");
 let scoreBoard = document.getElementById("score_board");
 let nextBlock = document.getElementById("next_block_board");
 
+let lines = document.querySelector(".lines");
+let score = document.querySelector(".score");
+
 let widthBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("width"));
 let heightBoard = parseFloat(window.getComputedStyle(gameBoard).getPropertyValue("height"));
 
@@ -9,6 +12,10 @@ let tile = {
   size: 26,
   isMoving: true 
 };
+
+let totalRowsCleared = 0;
+let scorePoint = 0;
+
 
 
 function getBottomClassName(bottom) {
@@ -144,14 +151,18 @@ function groupRows(stoppedSegments) {
 
 function moveBlockDown(blockGroup, intervalTime) {
   let moveInterval;
+  let currentIntervalTime = intervalTime; 
 
   function startInterval() {
+    if (moveInterval) {
+      clearInterval(moveInterval);
+    }
     moveInterval = setInterval(() => {
       let canMove = true;
 
       for (const segment of blockGroup.children) {
-        let bottom = parseFloat(segment.style.bottom) - tile.size;
-        let left = parseFloat(segment.style.left);
+        const bottom = parseFloat(segment.style.bottom) - tile.size;
+        const left = parseFloat(segment.style.left);
         if (checkCollision(bottom, left)) {
           canMove = false;
           break;
@@ -160,7 +171,7 @@ function moveBlockDown(blockGroup, intervalTime) {
 
       if (canMove) {
         for (const segment of blockGroup.children) {
-          let bottom = parseFloat(segment.style.bottom);
+          const bottom = parseFloat(segment.style.bottom);
           segment.style.bottom = `${bottom - tile.size}px`;
         }
       } else {
@@ -181,25 +192,44 @@ function moveBlockDown(blockGroup, intervalTime) {
         gameBoard.removeChild(blockGroup);
 
         let rowArray = groupRows(stoppedSegments);
-        let maxLength = Object.keys(rowArray).length;
+        const maxLength = Object.keys(rowArray).length;
 
         if (19 > maxLength) {
           createAndAddBlock();
         }
         clearRows();
       }
-    }, intervalTime);
+    }, currentIntervalTime);
   }
 
   startInterval();
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown") {
+      if (currentIntervalTime !== intervalTime / 4) {
+        currentIntervalTime = intervalTime / 4;
+        
+        startInterval();
+      }
+    }
+  });
+
+  document.addEventListener("keyup", (event) => {
+    if (event.key === "ArrowDown") {
+      if (currentIntervalTime !== intervalTime) {
+        currentIntervalTime = intervalTime;
+        startInterval();
+      }
+    }
+  });
 }
+
 
 
 function clearRows() {
   const divElements = Array.from(document.getElementsByTagName("div"));
   const classCount = {};
 
-  // Count how many segments are in each row
   divElements.forEach((div) => {
     div.classList.forEach((className) => {
       if (className.startsWith("bottom-")) {
@@ -210,20 +240,18 @@ function clearRows() {
 
   const classesToDelete = [];
   for (const className in classCount) {
-    if (classCount[className] >= 10) { // Assume a full row has 10 segments
+    if (classCount[className] >= 10) { 
       classesToDelete.push(className);
     }
   }
 
   if (classesToDelete.length > 0) {
-    // Clear the full rows
     classesToDelete.forEach((className) => {
       const elementsToDelete = document.getElementsByClassName(className);
       while (elementsToDelete.length > 0) {
         const element = elementsToDelete[0];
         element.parentNode.removeChild(element);
 
-        // Remove from stoppedSegments
         const bottom = parseFloat(element.style.bottom);
         const left = parseFloat(element.style.left);
         const indexToRemove = stoppedSegments.findIndex(
@@ -235,27 +263,27 @@ function clearRows() {
       }
     });
 
-    // Determine how many rows were cleared and the lowest cleared row
     const deletedRowNumbers = classesToDelete.map((className) => 
       parseInt(className.split("-")[1], 10)
     );
     const minDeletedRow = Math.max(...deletedRowNumbers);
-    // console.log(minDeletedRow);
     const numRowsCleared = classesToDelete.length;
+    totalRowsCleared += numRowsCleared;
+    scorePoint += 100 * numRowsCleared
+    lines.innerHTML = `Lines: ${totalRowsCleared}`;
+    score.innerHTML = `Score: ${scorePoint}`;
 
-    // Move the other segments down by the appropriate amount
     stoppedSegments.forEach((segment) => {
       if (segment.bottom > minDeletedRow * tile.size) {
-        segment.bottom -= numRowsCleared * tile.size; // Move segments down
+        segment.bottom -= numRowsCleared * tile.size; 
       }
     });
 
-    // Update the class names and positions of remaining divs
     divElements.forEach((div) => {
       div.classList.forEach((className) => {
         if (className.startsWith("bottom-")) {
           const rowNumber = parseInt(className.split("-")[1], 10);
-          console.log(rowNumber);
+          // console.log(rowNumber);
           if (rowNumber >= minDeletedRow) {
             const newBottom = parseFloat(div.style.bottom) - numRowsCleared * tile.size;
             div.style.bottom = `${newBottom}px`;
@@ -305,10 +333,12 @@ function createAndAddBlock() {
 
   gameBoard.appendChild(newBlock); 
 
-  const intervalTime = 70; 
+  let intervalTime = 140; 
   moveBlockDown(newBlock, intervalTime);
   // console.log(blockArray);
   // console.log(stoppedSegments); 
+  // console.log(totalRowsCleared);
+  // lines.innerHTML = `Lines: ${totalRowsCleared}`;
 }
 
 function isBlockMoving() {
