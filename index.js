@@ -44,16 +44,16 @@ function createBlock(color, layout) {
 
 
 const blockTypes = [
-  // {
-  //   layout: [
-  //     [23 * tile.size, 0],
-  //     [22 * tile.size, 0],
-  //     [21 * tile.size, 0],
-  //     [20 * tile.size, 0],
-  //   ],
-  //   maxLeft: tile.size ,
-  //   color: "skyblue",
-  // },
+  {
+    layout: [
+      [23 * tile.size, 0],
+      [22 * tile.size, 0],
+      [21 * tile.size, 0],
+      [20 * tile.size, 0],
+    ],
+    maxLeft: tile.size ,
+    color: "skyblue",
+  },
   {
     layout: [
       [21 * tile.size, 0],
@@ -64,56 +64,56 @@ const blockTypes = [
     maxLeft: 1 * tile.size ,
     color: "orange",
   },
-  // {
-  //   layout: [
-  //     [22 * tile.size, 0],
-  //     [21 * tile.size, 0],
-  //     [20 * tile.size, 0],
-  //     [20 * tile.size, tile.size],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "yellow",
-  // },
-  // {
-  //   layout: [
-  //     [21 * tile.size, tile.size],
-  //     [21 * tile.size, 2 * tile.size],
-  //     [20 * tile.size, 0],
-  //     [20 * tile.size, tile.size],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "green",
-  // },
-  // {
-  //   layout: [
-  //     [21 * tile.size, 0],
-  //     [21 * tile.size, tile.size],
-  //     [20 * tile.size, tile.size],
-  //     [20 * tile.size, 2 * tile.size],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "pink",
-  // },
-  // {
-  //   layout: [
-  //     [22 * tile.size, tile.size],
-  //     [21 * tile.size, tile.size],
-  //     [20 * tile.size, tile.size],
-  //     [20 * tile.size, 0],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "blue",
-  // },
-  // {
-  //   layout: [
-  //     [21 * tile.size, 0],
-  //     [21 * tile.size, tile.size],
-  //     [21 * tile.size, 2 * tile.size],
-  //     [20 * tile.size, tile.size],
-  //   ],
-  //   maxLeft: 1 * tile.size ,
-  //   color: "purple",
-  // },
+  {
+    layout: [
+      [22 * tile.size, 0],
+      [21 * tile.size, 0],
+      [20 * tile.size, 0],
+      [20 * tile.size, tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "yellow",
+  },
+  {
+    layout: [
+      [21 * tile.size, tile.size],
+      [21 * tile.size, 2 * tile.size],
+      [20 * tile.size, 0],
+      [20 * tile.size, tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "green",
+  },
+  {
+    layout: [
+      [21 * tile.size, 0],
+      [21 * tile.size, tile.size],
+      [20 * tile.size, tile.size],
+      [20 * tile.size, 2 * tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "pink",
+  },
+  {
+    layout: [
+      [22 * tile.size, tile.size],
+      [21 * tile.size, tile.size],
+      [20 * tile.size, tile.size],
+      [20 * tile.size, 0],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "blue",
+  },
+  {
+    layout: [
+      [21 * tile.size, 0],
+      [21 * tile.size, tile.size],
+      [21 * tile.size, 2 * tile.size],
+      [20 * tile.size, tile.size],
+    ],
+    maxLeft: 1 * tile.size ,
+    color: "purple",
+  },
 ];
 
 const stoppedSegments = [];
@@ -380,3 +380,4 @@ document.addEventListener("keydown", (event) => {
 
 
 createAndAddBlock();
+
